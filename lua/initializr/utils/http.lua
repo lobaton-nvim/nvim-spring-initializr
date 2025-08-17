@@ -5,30 +5,35 @@ function M.download_file(url, output_path, on_success, on_error)
 	Job:new({
 		command = "curl",
 		args = {
-			"-L", -- Sigue redirecciones (MUY importante)
-			"-f", -- Falla si el servidor devuelve error HTTP
+			"-L", -- Sigue redirecciones
+			"-f", -- Falla si HTTP no es 2xx
 			"-o",
 			output_path,
-			"--create-dirs", -- Crea directorios si no existen
+			"--create-dirs",
 			"-A",
-			"nvim-spring-initializr", -- User-Agent
-			"--silent", -- Menos ruido
-			"--show-error", -- Muestra errores incluso con --silent
+			"nvim-spring-initializr",
+			"--silent",
+			"--show-error",
 			url,
 		},
 		on_exit = function(job, return_val)
 			if return_val == 0 then
-				-- Descarga exitosa
-				require("initializr.utils.message").info("✅ Descarga completada: " .. output_path)
-				vim.schedule(on_success)
+				-- ✅ Usar vim.schedule para no romper el contexto
+				vim.schedule(function()
+					if on_success then
+						on_success()
+					end
+				end)
 			else
-				-- Captura errores de stderr
+				-- ✅ Capturar stderr y mostrar error con schedule
 				local stderr = table.concat(job:stderr_result(), "\n")
-				local msg_text = "❌ curl falló: " .. stderr .. " (código: " .. return_val .. ")"
-				require("initializr.utils.message").error(msg_text)
-				if on_error then
-					vim.schedule(on_error)
-				end
+				vim.schedule(function()
+					local msg = "❌ curl failed: " .. stderr
+					require("initializr.utils.message").error(msg)
+					if on_error then
+						on_error()
+					end
+				end)
 			end
 		end,
 	}):start()
