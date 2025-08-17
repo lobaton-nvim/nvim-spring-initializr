@@ -16,7 +16,9 @@ local function create_outer_popup()
 		},
 		position = "50%",
 		size = { width = "70%", height = "75%" },
-		win_options = { winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder" },
+		win_options = {
+			winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+		},
 	})
 end
 
@@ -109,7 +111,7 @@ local function create_create_button()
 				require("initializr.ui.init").close()
 				-- Cambiar al directorio del proyecto
 				vim.cmd("cd " .. vim.fn.fnameescape(input_path))
-				-- Opcional: abrir el proyecto en el explorador de archivos
+				-- Opcional: abrir explorador de archivos
 				-- vim.cmd("edit .")
 			end)
 		end)
@@ -125,7 +127,8 @@ end
 local function create_right_panel()
 	return Layout.Box({
 		Layout.Box(deps.create_button(deps.update_display), { size = "10%" }),
-		Layout.Box(deps.create_display(), { size = "70%" }),
+		Layout.Box(deps.create_remove_button(deps.update_display), { size = "10%" }),
+		Layout.Box(deps.create_display(), { size = "60%" }),
 		Layout.Box(create_create_button(), { size = "20%" }),
 	}, { dir = "col", size = "50%" })
 end
