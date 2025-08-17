@@ -15,7 +15,7 @@ local function create_outer_popup()
 			text = { top = "[ Spring Initializr ]", top_align = "center" },
 		},
 		position = "50%",
-		size = { width = "70%", height = "75%" },
+		size = { width = "80%", height = "95%" },
 		win_options = {
 			winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
 		},
